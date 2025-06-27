@@ -1,5 +1,8 @@
 extends Node
 
+# TODO make better signals
+signal websocket_message_received(msg: String)
+
 var peer: WebSocketPeer = WebSocketPeer.new()
 
 func _ready():
@@ -27,6 +30,7 @@ func _on_process_frame():
 			while peer.get_available_packet_count() > 0:
 				var msg = peer.get_packet().get_string_from_utf8()
 				print("📨 Received: %s" % msg)
+				emit_signal("websocket_message_received", msg)
 		WebSocketPeer.STATE_CLOSING:
 			print("⚠️ Closing connection...")
 		WebSocketPeer.STATE_CLOSED:
@@ -34,7 +38,10 @@ func _on_process_frame():
 
 func get_websocket_url() -> String:
 	return "wss://cobble-dev.zgamelogic.com/ws"
-	#if Engine.is_editor_hint():
-		#return "ws://localhost:8080/ws" # dev server
-	#else:
-		#return "wss://cobble.zgamelogic.com/ws" # production server
+	
+# This is what to do to subscribe to and listen to the signals
+#func _ready():
+	#WebSocketManager.connect("websocket_message_received", self, "_on_websocket_message_received")
+#
+#func _on_websocket_message_received(msg: String):
+	#print("📩 GUI got WebSocket message: ", msg)
