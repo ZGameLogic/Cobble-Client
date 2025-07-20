@@ -18,3 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 WebSocketManager="*res://Scripts/WebSocketManager.gd"
+WebSocketController="*res://Scripts/WebSocketController.gd"
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true
