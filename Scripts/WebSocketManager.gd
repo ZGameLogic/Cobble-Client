@@ -9,6 +9,7 @@ var server := TCPServer.new()
 var client := StreamPeerTCP.new()
 var listening := false
 var connected := false
+var connecting_with_token := false
 
 # local
 #var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512396301598792&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fregister&scope=identify&state="
@@ -21,12 +22,7 @@ var web_socket_url = "wss://cobble-dev.zgamelogic.com/ws"
 #var web_socket_url = "wss://cobble.zgamelogic.com/ws"
 
 func _ready():
-	var token = load_token()
-	if token == "":
-		open_login_browser()
-	else:
-		print("Token loaded: ", token)
-		open_web_socket_connection("", token)
+	login()
 
 func save_token(token: String):
 	var file = FileAccess.open(token_file_path, FileAccess.WRITE)
@@ -40,6 +36,7 @@ func load_token() -> String:
 	if not FileAccess.file_exists(token_file_path):
 		return ""
 	var file = FileAccess.open(token_file_path, FileAccess.READ)
+	print(file.get_path_absolute())
 	if file:
 		var token = file.get_as_text()
 		file.close()
@@ -48,6 +45,19 @@ func load_token() -> String:
 		print("Failed to open file for reading")
 		return ""
 
+func delete_token():
+	if not FileAccess.file_exists(token_file_path):
+		return
+	DirAccess.remove_absolute(token_file_path)
+
+func login():
+	var token = load_token()
+	if token == "":
+		open_login_browser()
+	else:
+		print("Token loaded: ", token)
+		open_web_socket_connection("", token)
+
 func open_web_socket_connection(state: String, token: String):
 	var headers = peer.handshake_headers;
 	if state != "":
@@ -55,6 +65,7 @@ func open_web_socket_connection(state: String, token: String):
 		headers.append("state: " + state)
 	elif token != "":
 		print("Connecting with token: " + token)
+		connecting_with_token = true
 		headers.append("token: " + token)
 	else:
 		print("No code or token provided.")
@@ -83,6 +94,7 @@ func _process(delta):
 		WebSocketPeer.STATE_CONNECTING:
 			print("⚠️ Connecting...")
 		WebSocketPeer.STATE_OPEN:
+			connecting_with_token = false
 			# Connected, check for incoming data 
 			while peer.get_available_packet_count() > 0:
 				var json = JSON.new()
@@ -92,7 +104,13 @@ func _process(delta):
 		WebSocketPeer.STATE_CLOSING:
 			print("⚠️ Closing connection...")
 		WebSocketPeer.STATE_CLOSED:
-			print("❌ Connection closed")
+			if(connecting_with_token): # This means we were connecting with token but failed and the user needs to re-login
+				print("Failed to auth with current token")
+				delete_token()
+				login()
+			else: # This means we lost connection and need to reconnect
+				login()
+			
 
 func generate_hex_uuid() -> String:
 	var hex_chars = "0123456789abcdef"
