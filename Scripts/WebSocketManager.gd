@@ -10,11 +10,17 @@ var client := StreamPeerTCP.new()
 var listening := false
 var connected := false
 
+# local
+var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512396301598792&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fregister&scope=identify&state="
+# dev
+#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=https%3A%2F%2Fcobble-dev.zgamelogic.com%2Fregister&scope=identify&state="
+# prod
+#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512194606039132&response_type=code&redirect_uri=https%3A%2F%2Fcobble.zgamelogic.com%2Fregister&scope=identify&state="
+
 func _ready():
 	var token = load_token()
 	if token == "":
 		open_login_browser()
-		start_local_http_listener()
 	else:
 		print("Token loaded: ", token)
 		open_web_socket_connection("", token)
@@ -39,12 +45,12 @@ func load_token() -> String:
 		print("Failed to open file for reading")
 		return ""
 
-func open_web_socket_connection(code: String, token: String):
-	var url = "wss://cobble-dev.zgamelogic.com/ws"
+func open_web_socket_connection(state: String, token: String):
+	var url = "ws://localhost:8080/ws"
 	var headers = peer.handshake_headers;
-	if code != "":
-		print("Connecting with code: " + code)
-		headers.append("code: " + code)
+	if state != "":
+		print("Connecting with state: " + state)
+		headers.append("state: " + state)
 	elif token != "":
 		print("Connecting with token: " + token)
 		headers.append("token: " + token)
@@ -60,19 +66,16 @@ func open_web_socket_connection(code: String, token: String):
 
 	
 func open_login_browser():
-	var url = "https://discord.com/oauth2/authorize?client_id=1387512396301598792&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8090%2Fregister&scope=identify"
+	var state = generate_hex_uuid()
+	var url = callback_url + state
 	OS.shell_open(url)
-
-func start_local_http_listener():
-	server.listen(8090)
-	listening = true
-	print("Listening on http://localhost:8090")
+	open_web_socket_connection(state, "")
 	
 func send_message(msg: String):
 	peer.send_text(msg)
 
 func _process(delta):
-		# Handle WebSocket polling
+	# Handle WebSocket polling
 	peer.poll()
 	match peer.get_ready_state():
 		WebSocketPeer.STATE_CONNECTING:
@@ -89,28 +92,9 @@ func _process(delta):
 		WebSocketPeer.STATE_CLOSED:
 			print("❌ Connection closed")
 
-	if listening and server.is_connection_available():
-		client = server.take_connection()
-		client.set_no_delay(true)
-		var request = client.get_utf8_string(client.get_available_bytes())
-		print("Request received:\n", request)
-
-		# Basic parse of GET request
-		if request.begins_with("GET /register?code="):
-			var start = request.find("?code=") + 6
-			var end = request.find(" ", start)
-			var code = request.substr(start, end - start)
-			print("OAuth2 code received: ", code)
-			open_web_socket_connection(code, "")
-
-			# Respond with a simple success page
-			var response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<html><body>Login successful! You can close this window.</body></html>"
-			client.put_utf8_string(response)
-			client.put_utf8_string("\r\n") # Just in case
-			client.put_data([])
-			
-			await get_tree().create_timer(0.2).timeout
-			
-			client.disconnect_from_host()
-			listening = false
-			server.stop()
+func generate_hex_uuid() -> String:
+	var hex_chars = "0123456789abcdef"
+	var uuid = ""
+	for i in 32:
+		uuid += hex_chars[randi() % hex_chars.length()]
+	return uuid
