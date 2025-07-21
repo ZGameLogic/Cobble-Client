@@ -11,11 +11,14 @@ var listening := false
 var connected := false
 
 # local
-var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512396301598792&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fregister&scope=identify&state="
+#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512396301598792&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fregister&scope=identify&state="
+#var web_socket_url = "ws://localhost:8080/ws"
 # dev
-#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=https%3A%2F%2Fcobble-dev.zgamelogic.com%2Fregister&scope=identify&state="
+var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=https%3A%2F%2Fcobble-dev.zgamelogic.com%2Fregister&scope=identify&state="
+var web_socket_url = "wss://cobble-dev.zgamelogic.com/ws"
 # prod
 #var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512194606039132&response_type=code&redirect_uri=https%3A%2F%2Fcobble.zgamelogic.com%2Fregister&scope=identify&state="
+#var web_socket_url = "wss://cobble.zgamelogic.com/ws"
 
 func _ready():
 	var token = load_token()
@@ -46,7 +49,6 @@ func load_token() -> String:
 		return ""
 
 func open_web_socket_connection(state: String, token: String):
-	var url = "ws://localhost:8080/ws"
 	var headers = peer.handshake_headers;
 	if state != "":
 		print("Connecting with state: " + state)
@@ -58,7 +60,7 @@ func open_web_socket_connection(state: String, token: String):
 		print("No code or token provided.")
 		return
 	peer.handshake_headers = headers
-	var err := peer.connect_to_url(url)
+	var err := peer.connect_to_url(web_socket_url)
 	if err != OK:
 		print("WebSocket connection failed with error: ", err)
 	else:
