@@ -12,7 +12,7 @@ var connected := false
 var connecting_with_token := false
 
 # local
-#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512396301598792&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fregister&scope=identify&state="
+#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fregister&scope=identify&state="
 #var web_socket_url = "ws://localhost:8080/ws"
 # dev
 var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=https%3A%2F%2Fcobble-dev.zgamelogic.com%2Fregister&scope=identify&state="
