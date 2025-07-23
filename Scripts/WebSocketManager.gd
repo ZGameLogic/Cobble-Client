@@ -22,7 +22,9 @@ var web_socket_url = "wss://cobble-dev.zgamelogic.com/ws"
 #var web_socket_url = "wss://cobble.zgamelogic.com/ws"
 
 func _ready():
-	login()
+	var token = load_token()
+	if token != "":
+		open_web_socket_connection("", token)
 
 func save_token(token: String):
 	var file = FileAccess.open(token_file_path, FileAccess.WRITE)
@@ -52,9 +54,7 @@ func delete_token():
 
 func login():
 	var token = load_token()
-	if token == "":
-		open_login_browser()
-	else:
+	if token != "":
 		print("Token loaded: ", token)
 		open_web_socket_connection("", token)
 
@@ -107,7 +107,6 @@ func _process(delta):
 			if(connecting_with_token): # This means we were connecting with token but failed and the user needs to re-login
 				print("Failed to auth with current token")
 				delete_token()
-				login()
 			else: # This means we lost connection and need to reconnect
 				login()
 			
