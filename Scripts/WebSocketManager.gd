@@ -3,7 +3,7 @@ extends Node
 signal websocket_message_received(msg: Dictionary)
 signal oauth_code_received(code: String)
 
-var peer: WebSocketPeer = WebSocketPeer.new()
+var peer: WebSocketPeer
 var token_file_path = "user://data.dat"
 var server := TCPServer.new()
 var client := StreamPeerTCP.new()
@@ -59,6 +59,7 @@ func login():
 		open_web_socket_connection("", token)
 
 func open_web_socket_connection(state: String, token: String):
+	peer = WebSocketPeer.new()
 	var headers = peer.handshake_headers;
 	if state != "":
 		print("Connecting with state: " + state)
@@ -88,6 +89,8 @@ func send_message(msg: String):
 	peer.send_text(msg)
 
 func _process(delta):
+	if peer == null:
+		return
 	# Handle WebSocket polling
 	peer.poll()
 	match peer.get_ready_state():
@@ -107,6 +110,8 @@ func _process(delta):
 			if(connecting_with_token): # This means we were connecting with token but failed and the user needs to re-login
 				print("Failed to auth with current token")
 				delete_token()
+				connecting_with_token = false
+				peer = null
 			else: # This means we lost connection and need to reconnect
 				login()
 			
