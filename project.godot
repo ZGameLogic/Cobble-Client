@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Cobble Client"
-run/main_scene="uid://cwsfay6rx1a1g"
+run/main_scene="uid://bsdu8bkkk68ri"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 

@@ -1,6 +1,8 @@
 extends Node
 
-var username: String
+signal username(code: String)
+
+var user_name: String
 var avatar: String
 var userId: int
 var game_check = false
@@ -15,13 +17,14 @@ func on_websocket_message_recieve(msg: Dictionary):
 
 	match msg["type"]:
 		"AUTHENTICATE":
-			username = msg.data.username
+			user_name = msg.data.username
 			avatar = msg.data.avatar
 			userId = msg.data.userId
-			print("Welcome " + username + " " + str(userId))
+			print("Welcome " + user_name + " " + str(userId))
 			var token = msg["data"]["rollingToken"]
 			WebSocketManager.save_token(token)
 			WebSocketManager.send_message("{\"type\": \"game-check\"}")
+			emit_signal("username", user_name)
 		"initial":
 			print(msg)
 		"game-check":

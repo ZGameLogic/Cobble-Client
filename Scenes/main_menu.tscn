@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://bsdu8bkkk68ri"]
+[gd_scene load_steps=2 format=3 uid="uid://bsdu8bkkk68ri"]
+
+[ext_resource type="Script" uid="uid://c185muqw4547u" path="res://Scripts/main_menu/main_menu.gd" id="1_28flt"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -7,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_28flt")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 0
@@ -15,3 +18,15 @@ offset_top = 209.388
 offset_right = 553.712
 offset_bottom = 217.388
 text = "Boom a button to press"
+
+[node name="UserNameLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 124.0
+offset_top = 105.0
+offset_right = 164.0
+offset_bottom = 145.0
+fit_content = true
+scroll_active = false
+
+[connection signal="pressed" from="Button" to="." method="login"]
+[connection signal="pressed" from="Button" to="Button" method="login"]
