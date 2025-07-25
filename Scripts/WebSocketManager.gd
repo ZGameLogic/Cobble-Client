@@ -1,7 +1,6 @@
 extends Node
 
 signal websocket_message_received(msg: Dictionary)
-signal oauth_code_received(code: String)
 
 var peer: WebSocketPeer
 var token_file_path = "user://data.dat"
@@ -103,7 +102,7 @@ func _process(delta):
 				var json = JSON.new()
 				var result = json.parse(peer.get_packet().get_string_from_utf8())
 				var data = json.data
-				emit_signal("websocket_message_received", data)
+				emit_signal(websocket_message_received.get_name(), data)
 		WebSocketPeer.STATE_CLOSING:
 			print("⚠️ Closing connection...")
 		WebSocketPeer.STATE_CLOSED:

@@ -5,12 +5,12 @@ signal username(code: String)
 var user_name: String
 var avatar: String
 var userId: int
-var game_check = false
+var game_check := false
 
 func _ready():
-	WebSocketManager.connect("websocket_message_received", self.on_websocket_message_recieve)
+	WebSocketManager.connect("websocket_message_received", self.on_websocket_message_receive)
 	
-func on_websocket_message_recieve(msg: Dictionary):
+func on_websocket_message_receive(msg: Dictionary) -> void:
 	if msg.statusCode != 200:
 		print(msg)
 		return
@@ -24,7 +24,7 @@ func on_websocket_message_recieve(msg: Dictionary):
 			var token = msg["data"]["rollingToken"]
 			WebSocketManager.save_token(token)
 			WebSocketManager.send_message("{\"type\": \"game-check\"}")
-			emit_signal("username", user_name)
+			emit_signal(username.get_name(), user_name)
 		"initial":
 			print(msg)
 		"game-check":

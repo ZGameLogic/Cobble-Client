@@ -6,7 +6,7 @@ func login():
 	print("pushed")
 
 func _ready():
-	username_label = $UserNameLabel
+	username_label = $TopRight/VBoxContainer/UserNameLabel
 	WebSocketController.connect("username", self.user_name_change)
 	
 func user_name_change(name: String):
