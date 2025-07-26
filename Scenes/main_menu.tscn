@@ -50,3 +50,6 @@ grow_vertical = 2
 [node name="Button" type="Button" parent="Center"]
 layout_mode = 2
 text = "Boom a button to press"
+
+[connection signal="pressed" from="TopRight/VBoxContainer/Button" to="." method="login"]
+[connection signal="pressed" from="Center/Button" to="." method="continue_start_game"]
