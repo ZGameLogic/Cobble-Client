@@ -25,6 +25,7 @@ func on_websocket_message_receive(msg: Dictionary) -> void:
 			WebSocketManager.save_token(token)
 			WebSocketManager.send_message("{\"type\": \"game-check\"}")
 			emit_signal(username.get_name(), user_name)
+			States.set_logged_in(true)
 		"initial":
 			print(msg)
 		"game-check":

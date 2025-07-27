@@ -96,6 +96,8 @@ func _process(delta):
 		WebSocketPeer.STATE_CONNECTING:
 			print("⚠️ Connecting...")
 		WebSocketPeer.STATE_OPEN:
+			if(!States.connected):
+				States.set_connected(true)
 			connecting_with_token = false
 			# Connected, check for incoming data 
 			while peer.get_available_packet_count() > 0:
@@ -113,6 +115,9 @@ func _process(delta):
 				peer = null
 			else: # This means we lost connection and need to reconnect
 				login()
+			if(States.connected): # signal that we are no longer connected
+				States.set_logged_in(false)
+				States.set_connected(false)
 			
 
 func generate_hex_uuid() -> String:

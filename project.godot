@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 WebSocketManager="*res://Scripts/WebSocketManager.gd"
 WebSocketController="*res://Scripts/WebSocketController.gd"
+States="*res://Scripts/States.gd"
 
 [rendering]
 
