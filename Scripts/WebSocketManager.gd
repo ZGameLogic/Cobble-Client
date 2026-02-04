@@ -12,14 +12,14 @@ var connected := false
 var connecting_with_token := false
 
 # local
-#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fregister&scope=identify&state="
-#var web_socket_url = "ws://localhost:8080/ws"
+#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fregister&scope=identify&state="
+#var web_socket_url = "ws://localhost:8080/api/ws"
 # dev
-var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=https%3A%2F%2Fcobble-dev.zgamelogic.com%2Fregister&scope=identify&state="
-var web_socket_url = "wss://cobble-dev.zgamelogic.com/ws"
+var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512311065084065&response_type=code&redirect_uri=https%3A%2F%2Fcobble-dev.zgamelogic.com%2Fapi%2Fregister&scope=identify&state="
+var web_socket_url = "wss://cobble-dev.zgamelogic.com/api/ws"
 # prod
-#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512194606039132&response_type=code&redirect_uri=https%3A%2F%2Fcobble.zgamelogic.com%2Fregister&scope=identify&state="
-#var web_socket_url = "wss://cobble.zgamelogic.com/ws"
+#var callback_url = "https://discord.com/oauth2/authorize?client_id=1387512194606039132&response_type=code&redirect_uri=https%3A%2F%2Fcobble.zgamelogic.com%2Fapi%2Fregister&scope=identify&state="
+#var web_socket_url = "wss://cobble.zgamelogic.com/api/ws"
 
 func _ready():
 	login()
